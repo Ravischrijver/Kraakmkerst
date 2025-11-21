@@ -2,7 +2,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Kerst Kraak’M: Ontvoerd door aliens — Complete versie</title>
+  <title>Kerst Kraak’M — UFO Cockpit Editie</title>
   <style>
     :root{
       --bg:#0b1220;
@@ -34,9 +34,7 @@
       font-size: clamp(28px, 5vw, 40px);
       letter-spacing:.5px;
     }
-    .subtitle{
-      color:var(--muted);
-    }
+    .subtitle{ color:var(--muted); }
     main{
       display:grid;
       grid-template-columns: 320px 1fr;
@@ -80,157 +78,118 @@
       color:#cfe6ff;
       background:linear-gradient(180deg,#0d152a,#0a1224);
     }
-    .log p{
-      margin:8px 0;
-      color:#cfe6ff;
-      font-size:13px;
-    }
+    .log p{ margin:8px 0; color:#cfe6ff; font-size:13px; }
     .status-row{
-      display:flex;
-      justify-content:space-between;
-      padding:6px 0;
-      border-bottom:1px dashed #24406e;
-      font-size:14px;
-      color:#cfe6ff;
+      display:flex; justify-content:space-between;
+      padding:6px 0; border-bottom:1px dashed #24406e;
+      font-size:14px; color:#cfe6ff;
     }
     .status-row:last-child{border-bottom:none}
     .btn{
-      appearance:none;
-      border:none;
+      appearance:none; border:none;
       background:linear-gradient(180deg, #13e8c4, #04b89c);
-      color:#032a2a;
-      font-weight:700;
-      padding:10px 14px;
-      border-radius:10px;
-      cursor:pointer;
-      transition:transform .05s ease;
-      box-shadow:0 8px 20px rgba(0,255,209,.15);
+      color:#032a2a; font-weight:700;
+      padding:10px 14px; border-radius:10px; cursor:pointer;
+      transition:transform .05s ease; box-shadow:0 8px 20px rgba(0,255,209,.15);
     }
     .btn:active{transform:scale(.98)}
     .btn.secondary{
       background:linear-gradient(180deg, #ff4f98, #e43783);
-      color:#2a0016;
-      box-shadow:0 8px 20px rgba(255,46,118,.18);
+      color:#2a0016; box-shadow:0 8px 20px rgba(255,46,118,.18);
     }
-    /* Game area */
-    .scene{
+    .btn.ghost{
+      background:transparent; border:1px solid #32507f; color:#cfe6ff;
+    }
+    .timer { font-size:18px; font-weight:bold; color:var(--gold); margin:10px 0; }
+    .score { font-size:16px; color:var(--ok); margin:10px 0; }
+
+    /* Cockpit */
+    .cockpit{
       background:var(--panel);
       border:1px solid #1f2b49;
-      border-radius:16px;
-      overflow:hidden;
+      border-radius:16px; overflow:hidden;
     }
     .scene-header{
-      padding:14px 16px;
-      border-bottom:1px solid #1f2b49;
+      padding:14px 16px; border-bottom:1px solid #1f2b49;
       background:
         radial-gradient(300px 120px at 20% 0%, rgba(0,255,209,.12), transparent),
         radial-gradient(300px 120px at 80% 0%, rgba(255,46,118,.1), transparent);
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
+      display:flex; align-items:center; justify-content:space-between;
     }
-    .scene-title{
-      margin:0;
-      font-size:18px;
-      letter-spacing:.3px;
-    }
-    .scene-body{
+    .scene-title{ margin:0; font-size:18px; letter-spacing:.3px; }
+    .dashboard{
       padding:18px;
-      display:grid;
-      gap:18px;
-      grid-template-columns: 1fr;
+      display:grid; gap:18px;
+      grid-template-columns: repeat(2, minmax(220px,1fr));
     }
-    .card{
-      background:#0f172a;
-      border:1px solid #203154;
-      border-radius:12px;
-      padding:12px;
+    .panel{
+      background:#0f172a; border:1px solid #203154; border-radius:12px;
+      padding:12px; position:relative;
     }
-    .card h3{
-      margin:0 0 6px;
-      font-size:16px;
-      color:#bdefff;
+    .panel h3{ margin:0 0 6px; font-size:16px; color:#bdefff; }
+    .status-dot{
+      position:absolute; top:12px; right:12px;
+      width:10px; height:10px; border-radius:50%;
+      background:#4a5c84; box-shadow:0 0 0 2px #203154 inset;
     }
-    .inline{
-      display:flex;
-      gap:10px;
-      align-items:center;
-      flex-wrap:wrap;
-      margin-top:8px;
+    .status-dot.ok{ background:var(--ok); }
+    .status-dot.pending{ background:#4a5c84; }
+    .inline{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-top:8px; }
+    input[type="text"], input[type="number"]{
+      background:#0b1220; border:1px solid #2b3f69; border-radius:10px;
+      padding:10px 12px; color:#e7f2ff; outline:none; min-width:180px;
     }
-    input[type="text"], input[type="number"], input[type="password"]{
-      background:#0b1220;
-      border:1px solid #2b3f69;
-      border-radius:10px;
-      padding:10px 12px;
-      color:#e7f2ff;
-      outline:none;
-      min-width:180px;
+    .hint{ font-size:13px; color:#9bb0cc; margin-top:6px; }
+    .ok{ color:var(--ok) } .fail{ color:var(--fail) }
+    .hidden{ display:none }
+
+    /* Overlay & Ending */
+    .overlay{
+      position:fixed; inset:0; background:rgba(5,10,20,.7);
+      display:none; align-items:center; justify-content:center; z-index:99;
     }
-    .hint{
-      font-size:13px;
-      color:#9bb0cc;
-      margin-top:6px;
+    .modal{
+      background:#0f172a; border:1px solid #203154; border-radius:16px;
+      padding:18px; max-width:720px; width:92%;
     }
-    .ok{color:var(--ok)}
-    .fail{color:var(--fail)}
-    .gate{
-      border-left:4px solid var(--accent2);
-      padding-left:12px;
-      margin:8px 0;
+    .modal h2{ margin:0 0 10px; }
+    .end-banner{
+      border:1px solid #27e7c7;
+      background:linear-gradient(180deg, rgba(19,232,196,.12), rgba(19,232,196,.05));
+      border-radius:12px; padding:12px; color:#cffff4; margin-top:10px;
     }
-    .pulse{
-      animation: glow 1.4s ease-in-out infinite;
+    .santa{
+      width:160px; height:160px; margin:8px auto 0; display:block;
+      filter:drop-shadow(0 4px 10px rgba(255,255,255,.1));
     }
+    .celebrate{ animation: glow 1.4s ease-in-out infinite; }
     @keyframes glow{
       0%{text-shadow:0 0 0 rgba(0,255,209,0)}
       50%{text-shadow:0 0 12px rgba(0,255,209,.6)}
       100%{text-shadow:0 0 0 rgba(0,255,209,0)}
     }
-    footer{
-      padding:16px 20px;
-      color:#8fa9cf;
-    }
-    .end-banner{
-      border:1px solid #27e7c7;
-      background:linear-gradient(180deg, rgba(19,232,196,.12), rgba(19,232,196,.05));
-      border-radius:12px;
-      padding:12px;
-      color:#cffff4;
-      display:none;
-      margin-top:10px;
-    }
-    .hidden{display:none}
-    .timer {
-      font-size:18px;
-      font-weight:bold;
-      color:var(--gold);
-      margin:10px 0;
-    }
-    .score {
-      font-size:16px;
-      color:var(--ok);
-      margin:10px 0;
-    }
+    footer{ padding:16px 20px; color:#8fa9cf; }
+
     @media (max-width:900px){
       main{grid-template-columns:1fr}
       .inventory,.log,.status{max-height:none}
+      .dashboard{grid-template-columns:1fr}
     }
   </style>
 </head>
 <body>
   <header>
-    <h1>Kerst Kraak’M: Ontvoerd door aliens</h1>
-    <p class="subtitle">Het is kerstavond in Slagharen. De slee is klaar. De man in rood? Weg. Jij kraakt het mysterie.</p>
+    <h1>Kerst Kraak’M — UFO Cockpit</h1>
+    <p class="subtitle">Je wordt wakker in een UFO boven Slagharen. De Kerstman is nergens. Jij bedient de cockpit en kraakt het mysterie.</p>
   </header>
 
   <main>
     <!-- Sidebar -->
-    <aside class="sidebar" aria-label="Spelerstatus en inventaris">
+    <aside class="sidebar" aria-label="Status en inventaris">
       <div class="status" id="statusBox">
-        <div class="status-row"><span>Hoofddoel</span><strong>Vind en bevrijd de Kerstman</strong></div>
-        <div class="status-row"><span>Subdoelen</span><strong id="subs">0/4 opgelost</strong></div>
-        <div class="status-row"><span>Locatie</span><strong id="loc">Kerstwerkplaats</strong></div>
+        <div class="status-row"><span>Hoofddoel</span><strong>Bevrijd de Kerstman</strong></div>
+        <div class="status-row"><span>Modules</span><strong id="subs">0/4 geactiveerd</strong></div>
+        <div class="status-row"><span>Locatie</span><strong id="loc">UFO Cockpit</strong></div>
         <div class="status-row"><span>Toegang</span><strong id="access">Basis</strong></div>
       </div>
 
@@ -238,12 +197,14 @@
       <div class="score" id="score">Score: 0</div>
 
       <h2 class="section-title">Inventaris</h2>
-      <div class="inventory" id="inv" aria-live="polite"><span class="chip">Sneeuwvlok-sleutel</span></div>
+      <div class="inventory" id="inv" aria-live="polite">
+        <span class="chip">Cockpit Badge</span>
+      </div>
 
       <h2 class="section-title">Notities</h2>
       <div class="log" id="log" aria-live="polite">
-        <p>— De slee staat warm te draaien maar de rode jas hangt nog aan de kapstok.</p>
-        <p>— Een vaag groen licht boven de dennen…</p>
+        <p>— De cockpit zoemt zacht. Buiten danst groen licht.</p>
+        <p>— Vier modules knipperen: Navigatie, Communicatie, Cryo, Muziek.</p>
       </div>
 
       <div class="inline">
@@ -253,173 +214,135 @@
       <p class="hint">Opslaan gebruikt localStorage. Werkt offline.</p>
     </aside>
 
-    <!-- Game area -->
-    <section class="scene">
+    <!-- Cockpit -->
+    <section class="cockpit">
       <div class="scene-header">
-        <h2 class="scene-title">Act 1 — Werkplaats: De ijskoude aanwijzing</h2>
-        <span class="hint">Los 4 puzzels op om de UFO-hangar te openen.</span>
+        <h2 class="scene-title">UFO Cockpit — Activeer alle modules</h2>
+        <span class="hint">Elke knop opent een puzzel. Geen directe antwoorden. Observeer, denk, los op.</span>
       </div>
-      <div class="scene-body">
-        <!-- Puzzle 1: Kerstcode -->
-        <div class="card" id="p1">
-          <h3>Kerstcode: Het liedje met de sleutel</h3>
-          <p>Op het werkbankje ligt een muziekdoos met acht noten: J, I, N, G, L, E, B, E. De doos vraagt om een acht-letter code.</p>
-          <p class="hint">Hint: Denk aan een klassieker die begint met “Jingle…”.</p>
+
+      <div class="dashboard">
+        <!-- NAVIGATIE -->
+        <div class="panel" id="panel-nav">
+          <span class="status-dot pending" id="dot-nav"></span>
+          <h3>Navigatie — Polaris kalibratie</h3>
+          <p>Het kompas wil een getal gebaseerd op wat je ‘ziet’ aan de noordkant.</p>
+          <p class="hint">Aanwijzing: Gebruik een eenvoudig rekenrecept op een woord dat bij de noordelijke regio hoort.</p>
           <div class="inline">
-            <input type="text" id="codeP1" placeholder="Voer code in (8 letters)" aria-label="Kerstcode invoer"/>
-            <button class="btn" onclick="checkP1()">Valideer</button>
-            <span id="statusP1" class="hint"></span>
+            <button class="btn" onclick="openPuzzle('nav')">Open puzzel</button>
           </div>
-          <div class="gate hidden" id="gateP1">
-            <p class="ok">Ontgrendeld: Je vindt een <strong>UFO-kwaliteitscertificaat</strong> met stempel “Aurora Sector”.</p>
-          </div>
-        </div>
-
-        <!-- Puzzle 2: Sneeuwvlok slot -->
-        <div class="card" id="p2">
-          <h3>Sneeuwvlok-slot: Zes armen, één patroon</h3>
-          <p>Een cryo-kist met een sneeuwvlok-slot toont zes cijfers die samen een symmetrisch patroon vormen.</p>
-          <p class="hint">Hint: Palindroom met kerstgetal. Probeer 122221.</p>
-          <div class="inline">
-            <input type="number" id="codeP2" placeholder="6 cijfers" aria-label="Sneeuwvlok code"/>
-            <button class="btn" onclick="checkP2()">Ontgrendel</button>
-            <span id="statusP2" class="hint"></span>
-          </div>
-          <div class="gate hidden" id="gateP2">
-            <p class="ok">Ontgrendeld: Je vindt een <strong>Cosmische bel</strong> die zacht zoemt bij groen licht.</p>
-          </div>
-        </div>
-
-        <!-- Puzzle 3: Rendier coördinaten -->
-        <div class="card" id="p3">
-          <h3>Rendier-coördinaten: Polaris oriëntatie</h3>
-          <p>Op een kaart staat: “Volg Polaris. Tel de letters van ‘NOORDPOOL’, vermenigvuldig met 2 en voeg 1 toe.”</p>
-          <p class="hint">NOORDPOOL heeft 9 letters: 9×2+1 = 19. Voer 19 in.</p>
-          <div class="inline">
-            <input type="number" id="codeP3" placeholder="Resultaat" aria-label="Coördinaat getal"/>
-            <button class="btn" onclick="checkP3()">Bevestig</button>
-            <span id="statusP3" class="hint"></span>
-          </div>
-          <div class="gate hidden" id="gateP3">
-            <p class="ok">Geactiveerd: Het kompas wijst naar een <strong>bosaal</strong> met vreemd footstep-licht.</p>
-          </div>
-        </div>
-
-        <!-- Puzzle 4: Alien dialoog (woordslot) -->
-        <div class="card" id="p4">
-          <h3>Alien-woordslot: “GLÆ-EN”</h3>
-          <p>Op de muur: “Wij namen de man in rood. Spreek de vreugde in onze tong.” De tekens lijken op het woord ‘VREUGDE’ zonder ‘V’.</p>
-          <p class="hint">Zoek het Nederlandse woord voor joy. Probeer “VREUGDE”.</p>
-          <div class="inline">
-            <input type="text" id="codeP4" placeholder="Woord" aria-label="Alien woordslot"/>
-            <button class="btn" onclick="checkP4()">Open</button>
-            <span id="statusP4" class="hint"></span>
-          </div>
-          <div class="gate hidden" id="gateP4">
-            <p class="ok">De deur schuift open: Een <strong>hangar</strong> met UFO-afdrukken en vallend stardust.</p>
-          </div>
-        </div>
-
-        <!-- Act 2: Hangar -->
-        <div class="card hidden" id="act2">
-          <h3>Act 2 — UFO-hangar: Frequenties van het Noorderlicht</h3>
-          <p>Een controlepaneel vraagt drie inputs: frequentie, patroon en toegangscode.</p>
-
-          <div class="card" style="margin-top:10px;">
-            <h3>Frequentie — Aurora beltoon</h3>
-            <p>Luister naar de kosmische bel. Het pulst in groepen van 5. Vul 5.</p>
+          <div class="hidden" id="puzzle-nav">
             <div class="inline">
-              <input type="number" id="freq" placeholder="Frequentie" />
-              <button class="btn" onclick="checkFreq()">Set</button>
-              <span id="statusFreq" class="hint"></span>
-            </div>
-          </div>
-
-          <div class="card" style="margin-top:10px;">
-            <h3>Patroon — Sneeuwspoor</h3>
-            <p>Het licht knippert in volgorde: Rood, Groen, Groen, Rood. Voer “RGGR”.</p>
-            <div class="inline">
-              <input type="text" id="pattern" placeholder="Patroon" />
-              <button class="btn" onclick="checkPattern()">Set</button>
-              <span id="statusPattern" class="hint"></span>
-            </div>
-          </div>
-
-          <div class="card" style="margin-top:10px;">
-            <h3>Toegang — Kerstman ID</h3>
-            <p>De badge toont: “SANTA-1225”. Vul SANTA-1225.</p>
-            <div class="inline">
-              <input type="text" id="accessCode" placeholder="Toegangscode" />
-              <button class="btn" onclick="checkAccess()">Set</button>
-              <span id="statusAccess" class="hint"></span>
-            </div>
-          </div>
-
-          <div class="gate hidden" id="hangarGate" style="margin-top:12px;">
-            <p class="ok pulse">Hyperlift actief! Je hoort sleebelletjes en een diepe stem: “Ho ho… bedankt!”</p>
-            <div class="end-banner" id="endBanner">
-              <strong>Eindscène:</strong> De Kerstman verschijnt, nog wat duizelig.
-              “Aliens wilden een betere beltoon. Jij stemde het Noorderlicht. Kerst is gered.”
-              <p id="finalScore"></p>
-              <p id="finalTime"></p>
-            </div>
-            <div class="inline" style="margin-top:10px;">
-              <button class="btn" onclick="showEnding()">Toon eindscène</button>
-              <button class="btn secondary" onclick="newGamePlus()">New Game+</button>
+              <input type="number" id="input-nav" placeholder="Voer getal in"/>
+              <button class="btn ghost" onclick="checkNav()">Valideer</button>
+              <span id="status-nav" class="hint"></span>
             </div>
           </div>
         </div>
 
+        <!-- COMMUNICATIE -->
+        <div class="panel" id="panel-com">
+          <span class="status-dot pending" id="dot-com"></span>
+          <h3>Communicatie — Vreemde tong</h3>
+          <p>De muur vraagt om één Nederlands woord dat pure blijdschap betekent.</p>
+          <p class="hint">Aanwijzing: Spreek het uit in je eigen taal, helder en volledig.</p>
+          <div class="inline">
+            <button class="btn" onclick="openPuzzle('com')">Open puzzel</button>
+          </div>
+          <div class="hidden" id="puzzle-com">
+            <div class="inline">
+              <input type="text" id="input-com" placeholder="Voer woord in"/>
+              <button class="btn ghost" onclick="checkCom()">Valideer</button>
+              <span id="status-com" class="hint"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- CRYO LOCK -->
+        <div class="panel" id="panel-cryo">
+          <span class="status-dot pending" id="dot-cryo"></span>
+          <h3>Cryo-slot — Sneeuwvlok symmetrie</h3>
+          <p>Een kist vraagt om een code van zes cijfers die in perfecte spiegeling staat.</p>
+          <p class="hint">Aanwijzing: Denk aan een palindroom dat past bij zes armen.</p>
+          <div class="inline">
+            <button class="btn" onclick="openPuzzle('cryo')">Open puzzel</button>
+          </div>
+          <div class="hidden" id="puzzle-cryo">
+            <div class="inline">
+              <input type="number" id="input-cryo" placeholder="6 cijfers"/>
+              <button class="btn ghost" onclick="checkCryo()">Valideer</button>
+              <span id="status-cryo" class="hint"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- MUZIEKMODULE -->
+        <div class="panel" id="panel-music">
+          <span class="status-dot pending" id="dot-music"></span>
+          <h3>Muziekmodule — Beltoon frase</h3>
+          <p>Een muziekdoos speelt een klassieker. Geef de volledige frase, in hoofdletters en zonder spaties.</p>
+          <p class="hint">Aanwijzing: Het is hét kerstlied dat vaak als eerste wordt gezongen.</p>
+          <div class="inline">
+            <button class="btn" onclick="openPuzzle('music')">Open puzzel</button>
+          </div>
+          <div class="hidden" id="puzzle-music">
+            <div class="inline">
+              <input type="text" id="input-music" placeholder="Frase (letters)"/>
+              <button class="btn ghost" onclick="checkMusic()">Valideer</button>
+              <span id="status-music" class="hint"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="scene-header">
+        <h2 class="scene-title">Rescue — Hyperlift naar de Kerstman</h2>
+        <button class="btn secondary" id="rescueBtn" disabled onclick="openRescue()">Start redding</button>
       </div>
     </section>
   </main>
 
+  <!-- Overlay: Game Over / Ending -->
+  <div class="overlay" id="overlay">
+    <div class="modal" id="modal">
+      <!-- Content dynamically injected -->
+    </div>
+  </div>
+
   <footer>
-    <p>Made met sneeuw, sterrenstof en een snufje Slagharen. Speelbaar offline, opslaan via localStorage.</p>
+    <p>Gemaakt voor Ravi: UFO-cockpit puzzel, 30min timer, offline opslag, zonder weggevertjes. 🎄👽</p>
   </footer>
 
   <script>
-    // ---- Minimalistische audio (geen externe bestanden) ----
+    // ---- Minimal Audio (WebAudio, geen externe bestanden) ----
     let audioCtx;
     function initAudio(){
       if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     }
-    function beep(frequency=660, duration=140, type='sine', volume=0.15){
+    function tone(f=660, d=140, type='sine', vol=0.15){
       initAudio();
-      const ctx = audioCtx;
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.type = type;
-      osc.frequency.value = frequency;
-      gain.gain.value = volume;
-      osc.connect(gain).connect(ctx.destination);
-      osc.start();
-      setTimeout(()=>osc.stop(), duration);
+      const ctx = audioCtx, osc = ctx.createOscillator(), gain = ctx.createGain();
+      osc.type = type; osc.frequency.value = f; gain.gain.value = vol;
+      osc.connect(gain).connect(ctx.destination); osc.start();
+      setTimeout(()=>osc.stop(), d);
     }
-    function successSound(){
-      beep(880,120,'sine',0.18);
-      setTimeout(()=>beep(1320,120,'sine',0.15),130);
-    }
-    function failSound(){
-      beep(220,160,'triangle',0.18);
-      setTimeout(()=>beep(180,160,'triangle',0.14),170);
-    }
-    function bellSound(){
-      beep(1046,180,'sine',0.22);
-      setTimeout(()=>beep(1318,140,'sine',0.18),180);
-      setTimeout(()=>beep(1567,160,'sine',0.16),330);
-    }
+    function successSound(){ tone(880,120,'sine',0.18); setTimeout(()=>tone(1320,120,'sine',0.15),130); }
+    function failSound(){ tone(220,160,'triangle',0.18); setTimeout(()=>tone(180,160,'triangle',0.14),170); }
+    function bellSound(){ tone(1046,180,'sine',0.22); setTimeout(()=>tone(1318,140,'sine',0.18),180); setTimeout(()=>tone(1567,160,'sine',0.16),330); }
 
-    // ---- State & persistence ----
+    // ---- State & Persistence ----
     const state = {
-      p1:false, p2:false, p3:false, p4:false,
-      freq:false, pattern:false, access:false,
-      inv:["Sneeuwvlok-sleutel"],
-      loc:"Kerstwerkplaats",
+      nav:false, com:false, cryo:false, music:false,
+      inv:["Cockpit Badge"],
+      loc:"UFO Cockpit",
       accessLevel:"Basis",
       score:0
     };
+    const totalSeconds = 1800; // 30 minuten
+    let timeLeft = totalSeconds;
+    let timerInterval;
 
+    // ---- UI refs ----
     const invEl = document.getElementById('inv');
     const logEl = document.getElementById('log');
     const subsEl = document.getElementById('subs');
@@ -427,278 +350,195 @@
     const accessEl = document.getElementById('access');
     const scoreEl = document.getElementById('score');
     const timerEl = document.getElementById('timer');
+    const rescueBtn = document.getElementById('rescueBtn');
+    const overlay = document.getElementById('overlay');
+    const modal = document.getElementById('modal');
 
-    function renderInv(){
-      invEl.innerHTML = state.inv.map(i => `<span class="chip">${i}</span>`).join('');
-    }
-    function log(msg){
-      const p = document.createElement('p');
-      p.textContent = "— " + msg;
-      logEl.appendChild(p);
-      logEl.scrollTop = logEl.scrollHeight;
-    }
+    // ---- Helpers ----
+    function renderInv(){ invEl.innerHTML = state.inv.map(i => `<span class="chip">${i}</span>`).join(''); }
+    function log(msg){ const p = document.createElement('p'); p.textContent = "— " + msg; logEl.appendChild(p); logEl.scrollTop = logEl.scrollHeight; }
     function updateSubs(){
-      const solved = ['p1','p2','p3','p4'].filter(k => state[k]).length;
-      subsEl.textContent = `${solved}/4 opgelost`;
-      if(solved === 4){
-        document.getElementById('act2').classList.remove('hidden');
-        state.loc = "UFO-hangar";
-        locEl.textContent = state.loc;
-        log("De hangar opent. Koude ruimte-lucht stroomt naar binnen.");
-      }
+      const solved = ['nav','com','cryo','music'].filter(k => state[k]).length;
+      subsEl.textContent = `${solved}/4 geactiveerd`;
+      if(solved === 4){ rescueBtn.disabled = false; log("Alle modules actief. Hyperlift klaar voor redding."); }
       saveState();
     }
     function updateScore(points){
-      state.score += points;
-      if(state.score < 0) state.score = 0;
-      scoreEl.textContent = "Score: " + state.score;
-      saveState();
+      state.score += points; if(state.score < 0) state.score = 0;
+      scoreEl.textContent = "Score: " + state.score; saveState();
+    }
+    function setDot(id, ok){ const el = document.getElementById(id); el.classList.toggle('ok', !!ok); el.classList.toggle('pending', !ok); }
+    function show(el){ el.classList.remove('hidden'); } function hide(el){ el.classList.add('hidden'); }
+    function ok(el, msg){ el.textContent = msg; el.className = 'hint ok'; }
+    function fail(el, msg){ el.textContent = msg; el.className = 'hint fail'; }
+
+    // ---- Open puzzles ----
+    function openPuzzle(which){
+      // open inline puzzle area
+      const ids = { nav:'puzzle-nav', com:'puzzle-com', cryo:'puzzle-cryo', music:'puzzle-music' };
+      show(document.getElementById(ids[which]));
+      log("Module geopend: " + which);
     }
 
-    // ---- Puzzle feedback ----
-    function ok(el, msg){
-      el.textContent = msg;
-      el.className = 'hint ok';
-    }
-    function fail(el, msg){
-      el.textContent = msg;
-      el.className = 'hint fail';
-    }
-
-    // ---- Puzzle checks ----
-    function checkP1(){
-      const v = (document.getElementById('codeP1').value || "").trim().toUpperCase();
-      const status = document.getElementById('statusP1');
-      if(v === "JINGLEBELLS"){
-        ok(status, "Correct. De muziekdoos speelt en onthult een document.");
-        document.getElementById('gateP1').classList.remove('hidden');
-        if(!state.inv.includes("UFO-certificaat")) state.inv.push("UFO-certificaat");
-        state.p1 = true;
-        renderInv(); updateSubs();
-        updateScore(25);
-        successSound();
-        log("P1: JINGLEBELLS — Certificaat gevonden: Aurora Sector.");
-      } else if(v){
-        fail(status, "Niet goed. Luister naar het liedje…");
-        updateScore(-5);
-        failSound();
-      } else {
-        fail(status, "Vul een code in.");
-        failSound();
-      }
-    }
-
-    function checkP2(){
-      const v = (document.getElementById('codeP2').value || "").trim();
-      const status = document.getElementById('statusP2');
-      if(v === "122221"){
-        ok(status, "Slot open. De cryo-kist schuift langzaam omhoog.");
-        document.getElementById('gateP2').classList.remove('hidden');
-        if(!state.inv.includes("Cosmische bel")) state.inv.push("Cosmische bel");
-        state.p2 = true;
-        renderInv(); updateSubs();
-        updateScore(25);
-        successSound();
-        log("P2: Sneeuwvlok patroon 122221 — Bel verkregen.");
-      } else if(v){
-        fail(status, "Probeer een palindroom dat past bij symmetrie.");
-        updateScore(-5);
-        failSound();
-      } else {
-        fail(status, "Voer 6 cijfers in.");
-        failSound();
-      }
-    }
-
-    function checkP3(){
-      const raw = document.getElementById('codeP3').value;
+    // ---- Checks (zonder weggevertjes in UI) ----
+    function checkNav(){
+      const raw = document.getElementById('input-nav').value;
       const v = Number(raw);
-      const status = document.getElementById('statusP3');
+      const status = document.getElementById('status-nav');
+      // Oplossing: 19 (afgeleid van NOORDPOOL met een eenvoudig recept)
       if(v === 19){
-        ok(status, "Coördinaten bevestigd. Het kompas licht op.");
-        document.getElementById('gateP3').classList.remove('hidden');
-        if(!state.inv.includes("Bosaal-coördinaat")) state.inv.push("Bosaal-coördinaat");
-        state.p3 = true;
-        renderInv(); updateSubs();
-        updateScore(25);
-        successSound();
-        log("P3: Polaris berekening 19 — Bosaal pad ontgrendeld.");
+        ok(status, "Kalibratie bevestigd. Kompas vergrendeld.");
+        state.nav = true; setDot('dot-nav', true); updateSubs(); updateScore(25); successSound();
+        log("Navigatie geactiveerd.");
       } else if(raw !== ""){
-        fail(status, "Check: letters in NOORDPOOL ×2 +1.");
-        updateScore(-5);
-        failSound();
+        fail(status, "Niet juist. Herhaal jouw recept en controleer het getal.");
+        updateScore(-5); failSound();
       } else {
         fail(status, "Voer een getal in.");
         failSound();
       }
     }
 
-    function checkP4(){
-      const v = (document.getElementById('codeP4').value || "").trim().toUpperCase();
-      const status = document.getElementById('statusP4');
+    function checkCom(){
+      const v = (document.getElementById('input-com').value || "").trim().toUpperCase();
+      const status = document.getElementById('status-com');
+      // Oplossing: VREUGDE
       if(v === "VREUGDE"){
-        ok(status, "Woord herkend. De deur schuift open.");
-        document.getElementById('gateP4').classList.remove('hidden');
-        state.p4 = true;
-        renderInv(); updateSubs();
-        updateScore(25);
-        successSound();
-        log("P4: VREUGDE — Hangar toegankelijk.");
+        ok(status, "Signaal ontvangen. De muur gloeit warm.");
+        state.com = true; setDot('dot-com', true); updateSubs(); updateScore(25); successSound();
+        log("Communicatie geactiveerd.");
       } else if(v){
-        fail(status, "Spreek de vreugde: het Nederlandse woord voor joy.");
-        updateScore(-5);
-        failSound();
+        fail(status, "Niet herkend. Spreek het heldere woord voor blijdschap.");
+        updateScore(-5); failSound();
       } else {
-        fail(status, "Voer het woord in.");
+        fail(status, "Voer een woord in.");
         failSound();
       }
     }
 
-    // ---- Act 2 checks ----
-    function checkFreq(){
-      const raw = document.getElementById('freq').value;
-      const v = Number(raw);
-      const el = document.getElementById('statusFreq');
-      if(v === 5){
-        ok(el, "Frequentie gesynchroniseerd.");
-        state.freq = true; maybeOpenHangar();
-        updateScore(10);
-        successSound();
-        log("Aurora frequentie ingesteld op 5.");
-      } else if(raw !== ""){
-        fail(el, "Luister: pulsen in groepen van 5.");
-        updateScore(-3);
-        failSound();
+    function checkCryo(){
+      const raw = (document.getElementById('input-cryo').value || "").trim();
+      const status = document.getElementById('status-cryo');
+      // Oplossing: 122221 (palindroom, 6 cijfers)
+      if(raw === "122221"){
+        ok(status, "Cryo-kist ontgrendeld. Koele damp ontsnapt.");
+        if(!state.inv.includes("Sneeuwvlok-sleutel")) state.inv.push("Sneeuwvlok-sleutel");
+        renderInv();
+        state.cryo = true; setDot('dot-cryo', true); updateSubs(); updateScore(25); successSound();
+        log("Cryo-slot geactiveerd.");
+      } else if(raw){
+        fail(status, "Niet juist. Denk aan perfecte spiegeling.");
+        updateScore(-5); failSound();
       } else {
-        fail(el, "Voer een getal in.");
+        fail(status, "Voer 6 cijfers in.");
         failSound();
       }
     }
 
-    function checkPattern(){
-      const v = (document.getElementById('pattern').value || "").trim().toUpperCase();
-      const el = document.getElementById('statusPattern');
-      if(v === "RGGR"){
-        ok(el, "Patroon bevestigd.");
-        state.pattern = true; maybeOpenHangar();
-        updateScore(10);
-        successSound();
-        log("Patroon RGGR ingevoerd.");
+    function checkMusic(){
+      const v = (document.getElementById('input-music').value || "").trim().toUpperCase().replace(/\s+/g,'');
+      const status = document.getElementById('status-music');
+      // Oplossing: JINGLEBELLS
+      if(v === "JINGLEBELLS"){
+        ok(status, "Beltoon ingesteld. De kamer resoneert feestelijk.");
+        state.music = true; setDot('dot-music', true); updateSubs(); updateScore(25); successSound();
+        log("Muziekmodule geactiveerd.");
       } else if(v){
-        fail(el, "Let op de volgorde: Rood, Groen, Groen, Rood.");
-        updateScore(-3);
-        failSound();
+        fail(status, "Niet juist. Geef de volledige frase, strak en zonder spaties.");
+        updateScore(-5); failSound();
       } else {
-        fail(el, "Voer een patroon in.");
+        fail(status, "Voer een frase in.");
         failSound();
       }
     }
 
-    function checkAccess(){
-      const v = (document.getElementById('accessCode').value || "").trim().toUpperCase();
-      const el = document.getElementById('statusAccess');
-      if(v === "SANTA-1225"){
-        ok(el, "Toegang verleend.");
-        state.access = true; state.accessLevel = "Hangar";
-        accessEl.textContent = state.accessLevel;
-        updateScore(10);
-        successSound();
-        maybeOpenHangar();
-        log("Toegang geverifieerd: SANTA-1225.");
-      } else if(v){
-        fail(el, "Bekijk de badge: SANTA-1225.");
-        updateScore(-3);
-        failSound();
-      } else {
-        fail(el, "Voer de toegangscode in.");
-        failSound();
+    // ---- Rescue flow ----
+    function openRescue(){
+      if(!state.nav || !state.com || !state.cryo || !state.music){
+        alert("Activeer alle modules eerst."); return;
       }
-    }
-
-    function maybeOpenHangar(){
-      if(state.freq && state.pattern && state.access){
-        document.getElementById('hangarGate').classList.remove('hidden');
-        bellSound();
-      }
-      saveState();
-    }
-
-    function showEnding(){
-      document.getElementById('endBanner').style.display = 'block';
+      // Eindscène: blije Kerstman (SVG), score & tijd
+      overlay.style.display = 'flex';
+      modal.innerHTML = `
+        <h2 class="celebrate">Hyperlift actief — De Kerstman verschijnt!</h2>
+        <svg class="santa" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" aria-label="Blije Kerstman">
+          <circle cx="60" cy="60" r="50" fill="#fff3e0"/>
+          <path d="M15 40 Q60 10 105 40 L105 55 Q60 35 15 55 Z" fill="#ff2e76"/>
+          <circle cx="42" cy="62" r="6" fill="#2b2b2b"/>
+          <circle cx="78" cy="62" r="6" fill="#2b2b2b"/>
+          <path d="M40 82 Q60 95 80 82" stroke="#e43783" stroke-width="4" fill="none"/>
+          <circle cx="60" cy="28" r="8" fill="#fff"/>
+          <rect x="25" y="90" width="70" height="16" rx="8" fill="#fff"/>
+        </svg>
+        <div class="end-banner">
+          <p>“Ho Ho Ho! Jij hebt de juiste modules afgestemd. Kerst is gered!”</p>
+          <p id="finalScore"></p>
+          <p id="finalTime"></p>
+          <div class="inline">
+            <button class="btn" onclick="closeOverlay()">Sluit</button>
+            <button class="btn secondary" onclick="newGamePlus()">New Game+</button>
+          </div>
+        </div>
+      `;
       const used = totalSeconds - timeLeft;
       const mm = String(Math.floor(used/60)).padStart(2,'0');
       const ss = String(used%60).padStart(2,'0');
       document.getElementById('finalScore').textContent = "Eindscore: " + state.score + " punten";
       document.getElementById('finalTime').textContent = "Tijd gebruikt: " + mm + ":" + ss;
-      log("Eindscène getoond: Kerstman gered. Score: "+state.score+" | Tijd: "+mm+":"+ss);
       bellSound();
       clearInterval(timerInterval);
       saveState();
+      log("Eindscène getoond: Kerstman lacht breed. Score: "+state.score+" | Tijd: "+mm+":"+ss);
     }
+    function closeOverlay(){ overlay.style.display = 'none'; }
 
-    function newGamePlus(){
-      // Houdt score-geschiedenis bij in localStorage
-      const history = JSON.parse(localStorage.getItem('kerst-escape-history') || '[]');
-      history.push({
-        score: state.score,
-        date: new Date().toISOString()
-      });
-      localStorage.setItem('kerst-escape-history', JSON.stringify(history));
-      alert("New Game+ start! Vorige score opgeslagen.");
-      localStorage.removeItem('kerst-escape');
-      location.reload();
-    }
-
-    // ---- Timer (30 minuten) ----
-    const totalSeconds = 1800; // 30 minuten
-    let timeLeft = totalSeconds;
-    let timerInterval;
-
+    // ---- Timer ----
     function startTimer(){
       timerInterval = setInterval(()=>{
         if(timeLeft <= 0){
           clearInterval(timerInterval);
           timerEl.textContent = "Tijd: 00:00";
-          log("Tijd voorbij! De aliens vertrekken met de Kerstman...");
-          failSound();
-          alert("Game Over! Je was te laat.");
+          gameOver();
         } else {
           timeLeft--;
           const m = String(Math.floor(timeLeft/60)).padStart(2,'0');
           const s = String(timeLeft%60).padStart(2,'0');
           timerEl.textContent = `Tijd: ${m}:${s}`;
-          // lichte spanning-klik elke 60s
-          if(timeLeft % 60 === 0) beep(520,70,'square',0.07);
+          if(timeLeft % 60 === 0) tone(520,70,'square',0.07);
         }
       },1000);
     }
+    function gameOver(){
+      overlay.style.display = 'flex';
+      modal.innerHTML = `
+        <h2>Game Over</h2>
+        <p>De tijd is op. De aliens vertrekken… maar je kunt het opnieuw proberen.</p>
+        <div class="inline">
+          <button class="btn" onclick="closeOverlay()">Sluit</button>
+          <button class="btn secondary" onclick="newGamePlus()">Opnieuw</button>
+        </div>
+      `;
+      failSound();
+      log("Tijd voorbij! Probeer opnieuw.");
+    }
 
-    // ---- Persistence helpers ----
+    // ---- Persistence ----
     function saveState(){
       try{
-        const snapshot = {
-          ...state,
-          timeLeft
-        };
-        localStorage.setItem('kerst-escape', JSON.stringify(snapshot));
-      }catch(e){
-        // stil
-      }
+        const snapshot = { ...state, timeLeft };
+        localStorage.setItem('ufo-kerst-escape', JSON.stringify(snapshot));
+      }catch(e){}
     }
     function restoreState(){
-      const raw = localStorage.getItem('kerst-escape');
-      if(!raw) return false;
+      const raw = localStorage.getItem('ufo-kerst-escape'); if(!raw) return false;
       try{
         const s = JSON.parse(raw);
         Object.assign(state, s);
-        // tijd herstellen (niet onder 0)
         if(typeof s.timeLeft === 'number' && s.timeLeft > 0 && s.timeLeft <= totalSeconds){
           timeLeft = s.timeLeft;
         }
         return true;
-      }catch(e){
-        return false;
-      }
+      }catch(e){ return false; }
     }
 
     // ---- UI restore ----
@@ -707,49 +547,38 @@
       scoreEl.textContent = "Score: " + state.score;
       locEl.textContent = state.loc;
       accessEl.textContent = state.accessLevel;
-
-      if(state.p1){document.getElementById('gateP1').classList.remove('hidden')}
-      if(state.p2){document.getElementById('gateP2').classList.remove('hidden')}
-      if(state.p3){document.getElementById('gateP3').classList.remove('hidden')}
-      if(state.p4){document.getElementById('gateP4').classList.remove('hidden')}
+      setDot('dot-nav', state.nav); setDot('dot-com', state.com); setDot('dot-cryo', state.cryo); setDot('dot-music', state.music);
       updateSubs();
-      if(state.loc === "UFO-hangar"){document.getElementById('act2').classList.remove('hidden')}
-      if(state.freq && state.pattern && state.access){
-        document.getElementById('hangarGate').classList.remove('hidden');
-      }
+      if(state.nav && state.com && state.cryo && state.music){ rescueBtn.disabled = false; }
       const m = String(Math.floor(timeLeft/60)).padStart(2,'0');
       const s = String(timeLeft%60).padStart(2,'0');
       timerEl.textContent = `Tijd: ${m}:${s}`;
     }
 
     // ---- Buttons ----
-    const saveBtn = document.getElementById('saveBtn');
-    const resetBtn = document.getElementById('resetBtn');
-
-    saveBtn.addEventListener('click', () => {
-      saveState();
-      log("Voortgang opgeslagen.");
-      successSound();
+    document.getElementById('saveBtn').addEventListener('click', () => {
+      saveState(); log("Voortgang opgeslagen."); successSound();
     });
-
-    resetBtn.addEventListener('click', () => {
+    document.getElementById('resetBtn').addEventListener('click', () => {
       if(!confirm("Reset spel en geheugen?")) return;
-      localStorage.removeItem('kerst-escape');
-      location.reload();
+      localStorage.removeItem('ufo-kerst-escape'); location.reload();
     });
+
+    function newGamePlus(){
+      const history = JSON.parse(localStorage.getItem('ufo-kerst-escape-history') || '[]');
+      history.push({ score: state.score, date: new Date().toISOString() });
+      localStorage.setItem('ufo-kerst-escape-history', JSON.stringify(history));
+      alert("New Game+! Vorige score opgeslagen.");
+      localStorage.removeItem('ufo-kerst-escape'); location.reload();
+    }
 
     // ---- Init ----
     (function init(){
       const had = restoreState();
       restoreUI();
       startTimer();
-      if(had){
-        log("Voortgang hersteld.");
-      }else{
-        log("Nieuw spel gestart. Je hebt 30 minuten.");
-      }
-      // resume AudioContext on first interaction (mobile policy)
       document.body.addEventListener('click', initAudio, { once:true });
+      if(had){ log("Voortgang hersteld."); } else { log("Nieuw spel: activeer alle modules binnen 30 minuten."); }
     })();
   </script>
 </body>
